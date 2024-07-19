@@ -164,3 +164,7 @@ cython_debug/
 conflearn_project/data/**.npy
 conflearn_project/data/**.pt
 **.DS_Store
+**/lightning_logs
+**/logs
+**/scratch
+**/.metaflow
