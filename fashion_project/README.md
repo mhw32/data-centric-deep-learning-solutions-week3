@@ -17,3 +17,7 @@ This project will investigate various strategies to identify elements for relabe
 | --- | --- |
 | none | 30.2% |
 | random | 38.9% |
+| uncertainty | 34.0% | 
+| margin | 37.5% | 
+| entropy | 42.4% |
+| augment | |
