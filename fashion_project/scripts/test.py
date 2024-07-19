@@ -22,21 +22,13 @@ class TestFlow(FlowSpec):
 
   Arguments
   ---------
-  config_path (str, default: ./config.py): path to a configuration file
-
+  config (str, default: ./configs/test.json): path to a configuration file
+  test (str, default: offline)
+  checkpoint (str, default: ./checkpoints/model.ckpt)
   """
-  config_path = Parameter(
-    'config', 
-    help='path to config file', 
-    default = join(CONFIG_DIR, 'test.json'), 
-    required = True,
-  )
-  test_type = Parameter(
-    'test', 
-    help='test type to run', 
-    default = 'offline', # production
-    required = True,
-  )
+  config_path = Parameter('config', help='path to config file', default = join(CONFIG_DIR, 'test.json'))
+  test_type = Parameter('test', help='test type to run', default = 'production') # offline
+  checkpoint_path = Parameter('checkpoint', help = 'path to checkpoint file', default = join(CHECKPOINT_DIR, 'model.ckpt'))
 
   @step
   def start(self):
@@ -53,9 +45,7 @@ class TestFlow(FlowSpec):
   def init_system(self):
     r"""Loads a trained deep learning model.
     """
-    checkpoint_path = join(CHECKPOINT_DIR, 'model.ckpt')
-    self.system = FashionClassifierSystem.load_from_checkpoint(checkpoint_path)
-    self.checkpoint_path = checkpoint_path
+    self.system = FashionClassifierSystem.load_from_checkpoint(self.checkpoint_path)
 
     self.next(self.test)
 

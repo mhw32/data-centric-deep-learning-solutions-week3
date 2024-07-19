@@ -11,7 +11,6 @@ from fashion.strategies import (
   uncertainty_sampling,
   margin_sampling,
   entropy_sampling,
-  cluster_sampling,
 )
 
 
@@ -43,8 +42,6 @@ def main(args):
     indices = margin_sampling(pred_probs, budget = args.budget)
   elif args.strategy == "entropy":
     indices = entropy_sampling(pred_probs, budget = args.budget)
-  elif args.strategy == "cluster":
-    indices = cluster_sampling(pred_probs, budget = args.budget)
   else:
     raise Exception(f'Strategy {args.strategy} is not a supported option.')
 
@@ -61,7 +58,7 @@ if __name__ == "__main__":
   import argparse
   parser = argparse.ArgumentParser()
   parser.add_argument('--strategy', type=str, default='random', 
-                      choices=['random', 'uncertainty', 'margin', 'entropy', 'cluster'],
+                      choices=['random', 'uncertainty', 'margin', 'entropy'],
                       help='Annotation strategy (default: random)',
                       )
   parser.add_argument('--budget', type=int, default=1000, 
