@@ -6,6 +6,7 @@ import numpy as np
 from os.path import join
 from pprint import pprint
 
+from torchvision import transforms
 from metaflow import FlowSpec, step, Parameter
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -25,6 +26,7 @@ class TrainFlow(FlowSpec):
   augment (bool, default: False): whether to augment the training dataset or not
   """
   config_path = Parameter('config', help = 'path to config file', default = join(CONFIG_DIR, 'train.json'))
+  augment = Parameter('augment', help = 'augment training data', default = False)
 
   @step
   def start(self):
@@ -45,8 +47,24 @@ class TrainFlow(FlowSpec):
     # configuration files contain all hyperparameters
     config = load_config(self.config_path)
     
+    if self.augment:
+      transform = transforms.Compose([
+        # ================================
+        # FILL ME OUT
+        # Any augmentations to apply to the training dataset with the goal of 
+        # enlarging the effective dataset size via "self supervision": an augmented
+        # data point maintains the same label.
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomRotation(degrees=30),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
+        # ================================
+        transforms.ToTensor(),
+      ])
+    else:
+      transform = transforms.ToTensor()
+
     # a data module wraps around training, dev, and test datasets
-    dm = FashionDataModule()
+    dm = FashionDataModule(transform=transform)
 
     # a PyTorch Lightning system wraps around model logic
     system = FashionClassifierSystem(config)
@@ -93,7 +111,7 @@ class TrainFlow(FlowSpec):
     # print results to command line
     pprint(results)
 
-    log_file = join(LOG_DIR, 'results.json')
+    log_file = join(LOG_DIR, 'augment.json' if self.augment else 'results.json')
     os.makedirs(os.path.dirname(log_file), exist_ok = True)
     to_json(results, log_file)  # save to disk
 

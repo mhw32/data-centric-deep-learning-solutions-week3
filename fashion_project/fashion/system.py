@@ -82,6 +82,7 @@ class ProductionDataset(Dataset):
 
   def __getitem__(self, index):
     x = self.images[index]
+
     if self.return_hidden_labels:
       y = self.hidden_labels[index]  # pretend we don't actually have labels
       return x, int(y)

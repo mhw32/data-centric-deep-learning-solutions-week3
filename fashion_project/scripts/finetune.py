@@ -6,14 +6,13 @@ import numpy as np
 from os.path import join
 from pprint import pprint
 
-from torchvision import transforms
 from torch.utils.data import DataLoader
 from metaflow import FlowSpec, step, Parameter
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 from fashion.system import ProductionDataset, FashionClassifierSystem
-from fashion.utils import load_config, to_json
+from fashion.utils import load_config
 from fashion.paths import LOG_DIR, CONFIG_DIR, CHECKPOINT_DIR, DATA_DIR
 
 
@@ -51,22 +50,6 @@ class FinetuneFlow(FlowSpec):
     """
     # configuration files contain all hyperparameters
     config = load_config(self.config_path)
-
-    if self.augment:
-      transform = transforms.Compose([
-        # ================================
-        # FILL ME OUT
-        # Any augmentations to apply to the training dataset with the goal of 
-        # enlarging the effective dataset size via "self supervision": an augmented
-        # data point maintains the same label.
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.RandomRotation(degrees=30),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
-        # ================================
-        transforms.ToTensor(),
-      ])
-    else:
-      transform = transforms.ToTensor()
     
     # a data module wraps around training, dev, and test datasets
     ds = ProductionDataset(self.dataset_path, return_hidden_labels = True)
